@@ -1,0 +1,430 @@
+COADING FOR BANKING PROJECT:
+HOME:
+public class Home extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_home);
+    }
+}
+ADMIN BUTTON:
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
+import android.widget.TextView;
+
+public class Adminbottom extends AppCompatActivity {
+
+    private TextView mTextMessage;
+//
+//    FragmentManager fm = getFragmentManager();
+//    // create a FragmentTransaction to begin the transaction and replace the Fragment
+//    FragmentTransaction fragmentTransaction = fm.beginTransaction();
+
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+                    Createaccount fragment = new Createaccount();
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.framelayout, fragment);
+                    ft.commit();
+                    return true;
+                case R.id.navigation_dashboard:
+                    Addmoney fragment1 = new Addmoney();
+                    FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
+                    ft1.replace(R.id.framelayout, fragment1);
+                    ft1.commit();
+
+                    return true;
+                case R.id.navigation_notifications:
+                    Statement fragment2 = new Statement();
+                    FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
+                    ft2.replace(R.id.framelayout, fragment2);
+                    ft2.commit();
+
+                    return true;
+                case R.id.navigation:
+                    Intent intent=new Intent(getApplicationContext(),Signin.class);
+                    startActivity(intent);
+
+            }
+            return false;
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_adminbottom);
+
+
+// replace the FrameLayout with new Fragment
+         // save the changes
+
+
+
+        mTextMessage = (TextView) findViewById(R.id.message);
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    }
+
+}
+CREATE BUTTON:
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.StringReader;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+
+public class Createaccount extends Fragment {
+    EditText nameid,genderid,phoneid,ageid,mailid,address,occupation,password;
+    Button btn;
+    Random random;
+TextView accountno;
+
+
+    int startRange=1055, endRange=996776;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view= inflater.inflate(R.layout.fragment_createaccount, container, false);
+        accountno=(TextView) view.findViewById(R.id.account);
+        nameid=(EditText) view.findViewById(R.id.name);
+        genderid=(EditText) view.findViewById(R.id.gender);
+        phoneid =(EditText) view.findViewById(R.id.phone);
+        ageid =(EditText)view.findViewById(R.id.age);
+        mailid =(EditText) view.findViewById(R.id.email);
+        address =(EditText) view.findViewById(R.id.address);
+        occupation =(EditText) view.findViewById(R.id.occupation);
+        password=(EditText) view.findViewById(R.id.password);
+        btn=(Button) view.findViewById(R.id.signup);
+        random = new Random();
+
+        String s=String.valueOf(random.nextInt((endRange-startRange)+1)+startRange);
+        accountno.setText("ud"+s);
+
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                process();
+            }
+        });
+
+
+        return view;
+    }
+
+    public void process() {
+        Toast.makeText(getContext(),"Welcome",Toast.LENGTH_LONG).show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "https://chittepuuday.000webhostapp.com/upload.php", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {/*
+                JSONObject jsonObject = new JSONObject();
+                try {\
+
+                    jsonArray = jsonObject.getJSONArray("project_details");
+                    String name=jsonArray.getString(nameid);
+                    String gender=jsonArray
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                JSONObject contact = jsonArray.getJSONObject();*/
+                Toast.makeText(getContext(),response,Toast.LENGTH_LONG).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(),error.toString(),Toast.LENGTH_LONG).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String,String> m=new HashMap<String, String>();
+                m.put("ACCOUNTNO",accountno.getText().toString());
+                m.put("NAME",nameid.getText().toString());
+                m.put("GENDER",genderid.getText().toString());
+                m.put("AGE",ageid.getText().toString());
+                m.put("EMAIL",mailid.getText().toString());
+                m.put("PHONE",phoneid.getText().toString());
+                m.put("ADDRESS",address.getText().toString());
+                m.put("OCCUPATION",occupation.getText().toString());
+                m.put("PASSWORD",password.getText().toString());
+                return m;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(stringRequest);
+
+    }
+}
+ADD MONEY:
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class Addmoney extends Fragment {
+
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_addmoney, container, false);
+    }
+
+}
+MINI STATEMENT:
+import android.content.Context;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+
+/**
+ * A simple {@link Fragment} subclass.
+ * Activities that contain this fragment must implement the
+ * {@link Ministatemen.OnFragmentInteractionListener} interface
+ * to handle interaction events.
+ * Use the {@link Ministatemen#newInstance} factory method to
+ * create an instance of this fragment.
+ */
+public class Ministatemen extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    // TODO: Rename and change types of parameters
+    private String mParam1;
+    private String mParam2;
+
+    private OnFragmentInteractionListener mListener;
+
+    public Ministatemen() {
+        // Required empty public constructor
+    }
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment Ministatemen.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static Ministatemen newInstance(String param1, String param2) {
+        Ministatemen fragment = new Ministatemen();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_ministatemen, container, false);
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
+    }
+}
+USER BUTTON:
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
+import android.widget.TextView;
+
+public class Userbottom1 extends AppCompatActivity {
+
+    private TextView mTextMessage;
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_dashboard:
+                    Transfermoney fragment = new Transfermoney();
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.framelayout, fragment);
+                    ft.commit();
+                    return true;
+                case R.id.navigation_home:
+                    Ministatemen fragment1 = new Ministatemen();
+                    FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
+                    ft1.replace(R.id.framelayout, fragment1);
+                    ft1.commit();  return true;
+                case R.id.navigation_notifications:
+                    Intent intent=new Intent(getApplicationContext(),Signin.class);
+                    startActivity(intent);
+
+                    return true;
+            }
+            return false;
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_userbottom1);
+
+        mTextMessage = (TextView) findViewById(R.id.message);
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+    }
+
+}
+TRANSFER MONEY:
+import android.content.Context;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+
+public class Transfermoney extends Fragment {
+
+    public Transfermoney() {
+        // Required empty public constructor
+    }
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_transfermoney, container, false);
+    }
+
+
+}
+MINI STATEMENT FOR USER:
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+
+public class Statement extends Fragment {
+    // TODO: Rename parameter arguments, choose names that match
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_statement, container, false);
+    }
+
+}
+
+
+
+
+
